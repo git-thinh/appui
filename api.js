@@ -8,7 +8,7 @@ var API_ID = 'api-id-xxxxx-xxxx-4xxx-yxxxxxxxx'.replace(/[xy]/g, function (c) {
 var WS_LOG;
 
 if ('WebSocket' in self) {
-    WS_LOG = new WebSocket('ws://192.168.81.216:56789');
+    WS_LOG = new WebSocket('ws://localhost:11111');
     WS_LOG.onopen = function () { };
     WS_LOG.onclose = function () { };
     WS_LOG.onmessage = function (e) { if (_view) console.log(e.data); };
