@@ -1,7 +1,6 @@
 <html>
-<body>
+<head>
     <script type="text/javascript">
-
         function load(url, type) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, false);
@@ -10,18 +9,21 @@
             return JSON.parse(xhr.responseText);
         }
 
-        var urls = load('https://raw.githubusercontent.com/git-thinh/appui/master/api_urls.txt')
+    </script>
+</head>
+<body>
+    <script type="text/javascript">
+        var CHANNEL_MESSAGE, API;
 
-        console.log(urls);
+        CHANNEL_MESSAGE  = new MessageChannel();
 
-        //var blob = new Blob(["onmessage = function(e) { postMessage('msg from worker'); }"]);
-        //var blobURL = window.URL.createObjectURL(blob);
+        //var apiJS = load('https://raw.githubusercontent.com/git-thinh/appui/master/api.js', 'text');
+        var apiJS = load('http://localhost:60000/api.js', 'text');        
+        var blob = new Blob([apiJS]);
+        var blobURL = window.URL.createObjectURL(blob);
 
-        //var worker = new Worker(blobURL);
-        //worker.onmessage = function (e) {
-        //    console.log(e.data);
-        //};
-        //worker.postMessage(null);
+        API = new Worker(blobURL);
+        API.postMessage('CONNECT', [CHANNEL_MESSAGE.port1]);
 
 
     </script>
