@@ -1,19 +1,25 @@
-<script type="text/javascript">
+<html>
+<body>
+    <script type="text/javascript">
 
-    var url = 'http://localhost:12345/'
-    fetch(url).then(function (res) { return res.json(); }).then(function (jo) {
-        console.log(jo);
-    });
+        function load(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false);
+            xhr.send(null);
+            return xhr.responseText;
+        }
+        var urls = load('https://raw.githubusercontent.com/git-thinh/appui/master/fetch.js')
+
+            var blob = new Blob(["onmessage = function(e) { postMessage('msg from worker'); }"]);
+            var blobURL = window.URL.createObjectURL(blob);
+
+            var worker = new Worker(blobURL);
+            worker.onmessage = function (e) {
+                console.log(e.data);
+            };
+            worker.postMessage(null);
 
 
-    var blob = new Blob(["onmessage = function(e) { postMessage('msg from worker'); }"]);
-    var blobURL = window.URL.createObjectURL(blob);
-
-    var worker = new Worker(blobURL);
-    worker.onmessage = function (e) {        
-        console.log(e.data);
-    };
-    worker.postMessage(null);
-
-
-</script>
+    </script>
+</body>
+</html>
