@@ -2,22 +2,26 @@
 <body>
     <script type="text/javascript">
 
-        function load(url) {
+        function load(url, type) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, false);
             xhr.send(null);
-            return xhr.responseText;
+            if (type == 'text') return xhr.responseText;
+            return JSON.parse(xhr.responseText);
         }
-        var urls = load('https://raw.githubusercontent.com/git-thinh/appui/master/fetch.js')
 
-            var blob = new Blob(["onmessage = function(e) { postMessage('msg from worker'); }"]);
-            var blobURL = window.URL.createObjectURL(blob);
+        var urls = load('https://raw.githubusercontent.com/git-thinh/appui/master/api_urls.txt')
 
-            var worker = new Worker(blobURL);
-            worker.onmessage = function (e) {
-                console.log(e.data);
-            };
-            worker.postMessage(null);
+        console.log(urls);
+
+        //var blob = new Blob(["onmessage = function(e) { postMessage('msg from worker'); }"]);
+        //var blobURL = window.URL.createObjectURL(blob);
+
+        //var worker = new Worker(blobURL);
+        //worker.onmessage = function (e) {
+        //    console.log(e.data);
+        //};
+        //worker.postMessage(null);
 
 
     </script>
