@@ -15,9 +15,7 @@
             return JSON.parse(xhr.responseText);
         }
 
-        var CHANNEL_MESSAGE, API;
-
-        CHANNEL_MESSAGE = new MessageChannel();
+        var API;
 
         //var apiJS = load('https://raw.githubusercontent.com/git-thinh/appui/master/api.js', 'text');
         var apiJS = load('http://localhost:60000/api.js', 'text');
@@ -25,7 +23,10 @@
         var blobURL = window.URL.createObjectURL(blob);
 
         API = new Worker(blobURL);
-        API.postMessage('CONNECT', [CHANNEL_MESSAGE.port1]);
+        API.onmessage = function (e) {
+            console.log(e.data);
+        };
+        API.postMessage('CONNECT');
 
     </script>
 </head>
