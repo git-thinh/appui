@@ -3,13 +3,21 @@ var API_ID = 'api-id-xxxxx-xxxx-4xxx-yxxxxxxxx'.replace(/[xy]/g, function (c) {
     return v.toString(16);
 });
 
+function load(url, type) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, false);
+    xhr.send(null);
+    if (type == 'text') return xhr.responseText;
+    return JSON.parse(xhr.responseText);
+}
+
 // #region [ LOG ]
 
 var WS_LOG, LOG_OPEN = false;
 
 if ('WebSocket' in self) {
     WS_LOG = new WebSocket('ws://localhost:11111');
-    WS_LOG.onopen = function () { f_log1(API_ID); LOG_OPEN = true; };
+    WS_LOG.onopen = function () { LOG_OPEN = true; f_log1(API_ID);  };
     WS_LOG.onclose = function () { };
     WS_LOG.onmessage = function (e) { if (_view) console.log(e.data); };
 }
@@ -40,6 +48,9 @@ self.addEventListener('message', function (e) {
 
     switch (e.data) {
         case 'CONNECT':
+            f_log1('API: UI -> CONNECTED ...');
+            break;
+        case 'TEST':
             f_log1('API: UI -> CONNECTED ...');
 
             var blob = new Blob(['body { background-color: yellow; }'], { type: 'text/css' });

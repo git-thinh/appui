@@ -5,7 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
     <script type="text/javascript">
-        //file:///G:/appui/index.html
+        //file:///D:/Projects/appui/index.html
+
+        function addJS(url, f_callback) {
+            var jsText = load(url, 'text');
+            
+            window.URL = window.URL || window.webkitURL;
+            var blob = new Blob([jsText], { type: 'text/javascript' });
+            var blobUrl = window.URL.createObjectURL(blob);
+
+            var head = document.getElementsByTagName('head')[0];
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.onload = f_callback({ Url: url, blobUrl: blobUrl, Data: jsText });
+            script.src = blobUrl;
+            head.appendChild(script);
+        }
 
         function load(url, type) {
             var xhr = new XMLHttpRequest();
@@ -15,21 +30,26 @@
             return JSON.parse(xhr.responseText);
         }
 
+
         var API;
 
-        //var apiJS = load('https://raw.githubusercontent.com/git-thinh/appui/master/api.js', 'text');
-        var apiJS = load('http://localhost:60000/api.js', 'text');
-        var blob = new Blob([apiJS]);
-        var blobURL = window.URL.createObjectURL(blob);
+        addJS('http://localhost:60000/config.js', function (v1) {
+            console.log(v1.Url, v1);
 
-        API = new Worker(blobURL);
-        API.onmessage = function (e) {
-            console.log(e.data);
-        };
-        API.postMessage('CONNECT');
+            addJS(CF.API_URL_SRC_JS_WORKER, function (v2) {
+                console.log(v2.Url, v2);
+
+                API = new Worker(v2.blobUrl);
+                API.onmessage = function (e) {
+                    console.log(e.data);
+                };
+                API.postMessage('CONNECT');
+            });
+        });
 
     </script>
 </head>
 <body>
+    <button onclick="API.postMessage('TEST')">send</button>
 </body>
 </html>
