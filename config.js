@@ -15,6 +15,8 @@ var API_KEY = {
     CACHE_URI: 'CACHE_URI',
 };
 
+var PRJ = {};
+
 
 function f_load(url, type) {
     var xhr = new XMLHttpRequest();
