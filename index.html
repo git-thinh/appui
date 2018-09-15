@@ -5,47 +5,92 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
     <script type="text/javascript">
+        //https://raw.githubusercontent.com/git-thinh/appui/master/index.html
+
+        //https://rawgit.com/git-thinh/appui/master/index.html
+        //https://cdn.rawgit.com/git-thinh/appui/master/index.html
+
         //file:///D:/Projects/appui/index.html
+        //http://localhost:60000/index.html
 
-        function addJS(url, f_callback) {
-            var jsText = load(url, 'text');
-            
-            window.URL = window.URL || window.webkitURL;
-            var blob = new Blob([jsText], { type: 'text/javascript' });
-            var blobUrl = window.URL.createObjectURL(blob);
+        function f_addJs(key, url, f_callback) { f_addJsAppend(key, url, null, null, f_callback); }
 
-            var head = document.getElementsByTagName('head')[0];
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.onload = f_callback({ Url: url, blobUrl: blobUrl, Data: jsText });
-            script.src = blobUrl;
-            head.appendChild(script);
-        }
-
-        function load(url, type) {
+        function f_addJsAppend(key, url, appendBefore, appendAfter, f_callback) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, false);
             xhr.send(null);
-            if (type == 'text') return xhr.responseText;
-            return JSON.parse(xhr.responseText);
+
+            var text = xhr.responseText;
+            if (appendBefore) text = appendBefore + text;
+            if (appendAfter) text += appendAfter;
+
+            var blob = f_blobCreateUrlText(key, url, text, 'text/javascript');
+
+            var head = document.getElementsByTagName('head')[0];
+            var script = document.createElement('script');
+            script.setAttribute('for', key);
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', blob.blobUrl);
+            script.onload = setTimeout(function () { f_callback(blob); }, 30);
+            head.appendChild(script);
         }
 
+        function f_blobCreateUrlText(key, url, text, type) {
+            window.URL = window.URL || window.webkitURL;
+            var blob = new Blob([text], { type: type });
+            var blobUrl = window.URL.createObjectURL(blob);
+            return { Key: key, Url: url, blobUrl: blobUrl, Text: text, Type: type, Blob: blob };
+        }
 
         var API;
 
-        addJS('http://localhost:60000/config.js', function (v1) {
-            console.log(v1.Url, v1);
+        function f_main_uiInit() {
+            console.info("DOM loaded");
 
-            addJS(CF.API_URL_SRC_JS_WORKER, function (v2) {
-                console.log(v2.Url, v2);
+            f_addJs('URI_JS_CONFIG', 'http://localhost:60000/config.js', function (v1) {
+                //Load underScore
+                var usJs = f_load(CF.API_URL_SRC_JS_UNDERSCORE, 'text');
+                var underScoreMsg = f_blobCreateUrlText(URI_KEY.JS_UNDERSCORE, CF.API_URL_SRC_JS_UNDERSCORE, usJs, 'text/javascript');
 
-                API = new Worker(v2.blobUrl);
+                //Setup worker
+                var apiJs = usJs + v1.Text + f_load(CF.API_URL_SRC_JS_WORKER, 'text');
+                var apiMsg = f_blobCreateUrlText(URI_KEY.JS_WORKER, CF.API_URL_SRC_JS_WORKER, apiJs, 'text/javascript');
+
+                API = new Worker(apiMsg.blobUrl);
                 API.onmessage = function (e) {
-                    console.log(e.data);
+                    var m = e.data;
+                    if (m == null) return;
+                    switch (m.Key) {
+                        case 'API_LOG':
+                            console.log(m.Value1, m.Value2);
+                            break;
+                        default:
+                            console.log(m);
+                            break;
+                    }
                 };
-                API.postMessage('CONNECT');
+
+                //console.log(v1.Url, v1);
+                //console.log(underScoreMsg.Url, underScoreMsg);
+                //console.log(apiMsg.Url, apiMsg);
+                 
+                API.postMessage({ Key: API_KEY.CACHE_URI, Input: apiMsg });
+                API.postMessage({ Key: API_KEY.CACHE_URI, Input: v1 });
+                API.postMessage({ Key: API_KEY.CACHE_URI, Input: underScoreMsg });
             });
-        });
+        }
+
+        function f_main_uiReady() {
+            /* DOMContentLoaded may fire before your script has a chance to run, so check before adding a listener */
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", f_main_uiInit);
+            } else {
+                console.log('DOMContentLoaded already fired');
+                f_main_uiInit();
+            }
+        }
+
+        f_main_uiReady();
 
     </script>
 </head>
