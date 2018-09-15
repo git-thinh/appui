@@ -1,0 +1,19 @@
+<script type="text/javascript">
+
+    var url = 'http://localhost:12345/'
+    fetch(url).then(function (res) { return res.json(); }).then(function (jo) {
+        console.log(jo);
+    });
+
+
+    var blob = new Blob(["onmessage = function(e) { postMessage('msg from worker'); }"]);
+    var blobURL = window.URL.createObjectURL(blob);
+
+    var worker = new Worker(blobURL);
+    worker.onmessage = function (e) {        
+        console.log(e.data);
+    };
+    worker.postMessage(null);
+
+
+</script>
