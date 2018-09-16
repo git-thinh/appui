@@ -1,7 +1,7 @@
 //https://drive.google.com/file/d/1FjcvppjaJ-f-b8LihqCjg-gBLZF7WMHb/view
 //https://docs.google.com/document/d/1FjcvppjaJ-f-b8LihqCjg-gBLZF7WMHb/export?format=txt
 //https://drive.google.com/uc?export=download&id=1FjcvppjaJ-f-b8LihqCjg-gBLZF7WMHb
-
+//https://raw.githubusercontent.com/git-thinh/appui/master/_.txt
 
 //https://htmlpreview.github.io/
 
@@ -13,7 +13,13 @@
 //file:///D:/Projects/appui/index.html
 //http://localhost:60000/index.html
 
+// #region [ CONFIG ]
 
+var APP = {
+    HOST: '',
+    URL: '',
+    TEXT: '',
+};
 
 var CF = {
     API_URL_SRC_JS_CONFIG: 'http://localhost:60000/config.js',
@@ -29,13 +35,15 @@ var URI_KEY = {
 }
 
 var API_KEY = {
+    APP_INFO: 'APP_INFO',
     CACHE_URI: 'CACHE_URI',
 };
 
 var PRJ = {};
 
+// #endregion
 
-function load(url, type) {
+function f_load(url, type) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, false);
     xhr.send(null);
@@ -43,12 +51,12 @@ function load(url, type) {
     return JSON.parse(xhr.responseText);
 }
 
-
+// #region [ DOM - BLOB ]
 
 function f_dom_addJs(key, url, f_callback) { f_dom_addJsAppend(key, url, null, null, f_callback); }
 
 function f_dom_addJsAppend(key, url, appendBefore, appendAfter, f_callback) {
-    var text = load(url, 'text');
+    var text = f_load(url, 'text');
     if (appendBefore) text = appendBefore + text;
     if (appendAfter) text += appendAfter;
 
@@ -73,51 +81,57 @@ function f_blob_createUrlText(key, url, text, type) {
     return { Key: key, Url: url, blobUrl: blobUrl, Text: text, Type: type, Blob: blob };
 }
 
+// #endregion
+
+// #region [ MAIN - FRAME ]
+
 var API;
+function f_main_uiInit(host, blobUrlConfig, textConfig) {
+    APP.HOST = host;
+    APP.TEXT = textConfig;
+    APP.URL = blobUrlConfig;
+    console.log('APP', APP);
 
+    //Load underScore
+    var usJs = f_load(CF.API_URL_SRC_JS_UNDERSCORE, 'text');
+    var underScoreMsg = f_blob_createUrlText(URI_KEY.JS_UNDERSCORE, CF.API_URL_SRC_JS_UNDERSCORE, usJs, 'text/javascript');
 
-function f_main_uiInit() {
-    f_addJs('URI_JS_CONFIG', 'http://localhost:60000/config.js', function (v1) {
-        //Load underScore
-        var usJs = f_load(CF.API_URL_SRC_JS_UNDERSCORE, 'text');
-        var underScoreMsg = f_blobCreateUrlText(URI_KEY.JS_UNDERSCORE, CF.API_URL_SRC_JS_UNDERSCORE, usJs, 'text/javascript');
+    //Setup worker
+    var apiJs = usJs + ' ; ' + APP.TEXT + ' ; ' + f_load(CF.API_URL_SRC_JS_WORKER, 'text');
+    var apiMsg = f_blob_createUrlText(URI_KEY.JS_WORKER, CF.API_URL_SRC_JS_WORKER, apiJs, 'text/javascript');
 
-        //Setup worker
-        var apiJs = usJs + v1.Text + f_load(CF.API_URL_SRC_JS_WORKER, 'text');
-        var apiMsg = f_blobCreateUrlText(URI_KEY.JS_WORKER, CF.API_URL_SRC_JS_WORKER, apiJs, 'text/javascript');
+    API = new Worker(apiMsg.blobUrl);
+    API.onmessage = function (e) {
+        var m = e.data;
+        if (m == null) return;
+        switch (m.Key) {
+            case 'API_LOG':
+                console.log(m.Value1, m.Value2);
+                break;
+            default:
+                console.log(m);
+                break;
+        }
+    };
 
-        API = new Worker(apiMsg.blobUrl);
-        API.onmessage = function (e) {
-            var m = e.data;
-            if (m == null) return;
-            switch (m.Key) {
-                case 'API_LOG':
-                    console.log(m.Value1, m.Value2);
-                    break;
-                default:
-                    console.log(m);
-                    break;
-            }
-        };
+    //console.log(underScoreMsg.Url, underScoreMsg);
+    //console.log(apiMsg.Url, apiMsg);
 
-        //console.log(v1.Url, v1);
-        //console.log(underScoreMsg.Url, underScoreMsg);
-        //console.log(apiMsg.Url, apiMsg);
-
-        API.postMessage({ Key: API_KEY.CACHE_URI, Input: apiMsg });
-        API.postMessage({ Key: API_KEY.CACHE_URI, Input: v1 });
-        API.postMessage({ Key: API_KEY.CACHE_URI, Input: underScoreMsg });
-    });
+    API.postMessage({ Key: API_KEY.APP_INFO, Input: APP });
+    API.postMessage({ Key: API_KEY.CACHE_URI, Input: apiMsg });
+    API.postMessage({ Key: API_KEY.CACHE_URI, Input: underScoreMsg });
 }
 
-function f_main_uiReady() {
-    /* DOMContentLoaded may fire before your script has a chance to run, so check before adding a listener */
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", f_main_uiInit);
-    } else {
-        console.log('DOMContentLoaded already fired');
-        f_main_uiInit();
-    }
-}
+//function f_main_uiReady() {
+//    /* DOMContentLoaded may fire before your script has a chance to run, so check before adding a listener */
+//    if (document.readyState === "loading") {
+//        document.addEventListener("DOMContentLoaded", f_main_uiInit);
+//    } else {
+//        console.log('DOMContentLoaded already fired');
+//        f_main_uiInit();
+//    }
+//}
 
-f_main_uiReady();
+//function f_fame_uiReady() { }
+
+// #endregion

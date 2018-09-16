@@ -1,5 +1,37 @@
 
 /***************************/
+
+
+// #region [ CONFIG ]
+
+APP = {
+    HOST: '',
+    URL: '',
+    TEXT: '',
+};
+
+CF = {
+    API_URL_SRC_JS_CONFIG: 'http://localhost:60000/config.js',
+    API_URL_SRC_JS_UNDERSCORE: 'http://localhost:60000/lib/underscore.min.js',
+    API_URL_SRC_JS_WORKER: 'http://localhost:60000/api.js',
+    //API_URL_SRC_JS_WORKER: 'https://raw.githubusercontent.com/git-thinh/appui/master/api.js',
+};
+
+URI_KEY = {
+    JS_WORKER: 'JS_WORKER',
+    JS_UNDERSCORE: 'URI_JS_UNDERSCORE',
+    JS_CONFIG: 'URI_JS_CONFIG',
+}
+
+API_KEY = {
+    APP_INFO: 'APP_INFO',
+    CACHE_URI: 'CACHE_URI',
+};
+
+PRJ = {};
+
+// #endregion
+
 if (!self['console']) {
     self.console = {};
     self.console.info = function () { };
@@ -23,9 +55,12 @@ self.addEventListener('message', function (e) {
     var input = m.Input;
 
     switch (m.Key) {
+        case API_KEY.APP_INFO:
+            APP = input;
+            console.log('API -> ' + m.Key, input);
+            break;
         case API_KEY.CACHE_URI:
-            console.log('API: -> CACHE_URI:', input);
-
+            console.log('API -> ' + m.Key, input);
             break;
         case 'TEST':
             console.log('API: UI -> CONNECTED ...');
