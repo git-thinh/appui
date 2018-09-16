@@ -16,8 +16,19 @@
         if (v1) {
             var text;
             var urls = v1.split(';');
-            
+
+            //
+
             for (var i = 0; i < urls.length; i++) {
+                var img = document.body.appendChild(document.createElement("img"));
+                img.onload = function () {
+                    setServerStatus("online");
+                };
+                img.onerror = function () {
+                    setServerStatus("offline");
+                };
+                img.src = urls[i] + 'loading.GIF';
+
                 text = _get(urls[i] + 'app.js');
                 console.log(urls[i] + ' ----> ', text != null);
                 if (text) {
