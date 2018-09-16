@@ -22,14 +22,21 @@ var APP = {
 };
 
 var CF = {
-    API_URL_SRC_JS_UNDERSCORE: 'lib/underscore.min.js',
-    API_URL_SRC_JS_WORKER: 'api.js',
+    URL_PATH_JS_WORKER: 'api.js',
+    URL_PATH_JS_UNDERSCORE: 'lib/underscore.min.js',
+    URL_PATH_W2UI_JS: 'lib/w2ui/w2ui.min.js',
+    URL_PATH_W2UI_CSS: 'lib/w2ui/w2ui.min.css',
+    URL_PATH_FONT_AWESOME_47_CSS: 'lib/font-awesome.4.7/font-awesome.min.css',
+    URL_PATH_FONT_AWESOME_47_FONT: 'lib/font-awesome.4.7/fontawesome-webfont.ttf',
+    URL_PATH_JQUERY_2X: 'lib/jquery-2.1.4.min.js',
+    URL_PATH_JQUERY_1X: 'lib/jquery-1.12.4.min.js',
 };
 
 var URI_KEY = {
     JS_WORKER: 'JS_WORKER',
     JS_UNDERSCORE: 'URI_JS_UNDERSCORE',
-    JS_CONFIG: 'URI_JS_CONFIG',
+    JS_JQUERY_2X: 'URI_JS_JQUERY_2X',
+    JS_JQUERY_1X: 'URI_JS_JQUERY_1X',
 }
 
 var API_KEY = {
@@ -37,12 +44,19 @@ var API_KEY = {
     CACHE_URI: 'CACHE_URI',
 };
 
-var PRJ = {};
+var PRJ = {
+    W2UI: {
+        DEMO: {
+            LIBS: [ CF.URL_PATH_JQUERY_2X ],
+            PATH_TEMPLATE: 'view/w2ui/demos/index.html'
+        },
+    }
+};
 
 // #endregion
 
 function f_load(url, type) {
-    if (url.indexOf('http') != 0) url += APP.HOST + url;
+    if (url.indexOf('http') != 0) url = APP.HOST + url;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, false);
     xhr.send(null);
@@ -93,12 +107,12 @@ function f_main_uiInit(host, blobUrlConfig, textConfig) {
     console.log('APP', APP);
 
     //Load underScore
-    var usJs = f_load(CF.API_URL_SRC_JS_UNDERSCORE, 'text');
-    var underScoreMsg = f_blob_createUrlText(URI_KEY.JS_UNDERSCORE, CF.API_URL_SRC_JS_UNDERSCORE, usJs, 'text/javascript');
+    var usJs = f_load(CF.URL_PATH_JS_UNDERSCORE, 'text');
+    var underScoreMsg = f_blob_createUrlText(URI_KEY.JS_UNDERSCORE, CF.URL_PATH_JS_UNDERSCORE, usJs, 'text/javascript');
 
     //Setup worker
-    var apiJs = usJs + ' ; ' + APP.TEXT + ' ; ' + f_load(CF.API_URL_SRC_JS_WORKER, 'text');
-    var apiMsg = f_blob_createUrlText(URI_KEY.JS_WORKER, CF.API_URL_SRC_JS_WORKER, apiJs, 'text/javascript');
+    var apiJs = usJs + ' ; ' + APP.TEXT + ' ; ' + f_load(CF.URL_PATH_JS_WORKER, 'text');
+    var apiMsg = f_blob_createUrlText(URI_KEY.JS_WORKER, CF.URL_PATH_JS_WORKER, apiJs, 'text/javascript');
 
     API = new Worker(apiMsg.blobUrl);
     API.onmessage = function (e) {

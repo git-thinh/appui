@@ -1,35 +1,6 @@
 
 /***************************/
 
-
-// #region [ CONFIG ]
-
-APP = {
-    HOST: '',
-    URL: '',
-    TEXT: '',
-};
-
-CF = {
-    API_URL_SRC_JS_UNDERSCORE: '',
-    API_URL_SRC_JS_WORKER: '',
-};
-
-URI_KEY = {
-    JS_WORKER: 'JS_WORKER',
-    JS_UNDERSCORE: 'URI_JS_UNDERSCORE',
-    JS_CONFIG: 'URI_JS_CONFIG',
-}
-
-API_KEY = {
-    APP_INFO: 'APP_INFO',
-    CACHE_URI: 'CACHE_URI',
-};
-
-PRJ = {};
-
-// #endregion
-
 if (!self['console']) {
     self.console = {};
     self.console.info = function () { };
