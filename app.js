@@ -8,6 +8,7 @@
 //https://raw.githubusercontent.com/git-thinh/appui/master/index.html
 
 //https://rawgit.com/git-thinh/appui/master/index.html
+//https://rawgit.com/git-thinh/appui/master/view/w2ui/demos/index.html#!combo/combo-6
 //https://cdn.rawgit.com/git-thinh/appui/master/index.html
 
 //file:///D:/Projects/appui/index.html
@@ -46,9 +47,11 @@ var API_KEY = {
 
 var PRJ = {
     W2UI: {
-        DEMO: {
-            LIBS: [ CF.URL_PATH_JQUERY_2X ],
-            PATH_TEMPLATE: 'view/w2ui/demos/index.html'
+        DEMO001: {
+            LIBS: [CF.URL_PATH_JQUERY_2X]
+        },
+        DEMOS: {
+            LIBS: [CF.URL_PATH_JQUERY_2X]
         },
     }
 };
