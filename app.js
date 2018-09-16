@@ -22,10 +22,8 @@ var APP = {
 };
 
 var CF = {
-    API_URL_SRC_JS_CONFIG: 'http://localhost:60000/config.js',
-    API_URL_SRC_JS_UNDERSCORE: 'http://localhost:60000/lib/underscore.min.js',
-    API_URL_SRC_JS_WORKER: 'http://localhost:60000/api.js',
-    //API_URL_SRC_JS_WORKER: 'https://raw.githubusercontent.com/git-thinh/appui/master/api.js',
+    API_URL_SRC_JS_UNDERSCORE: 'lib/underscore.min.js',
+    API_URL_SRC_JS_WORKER: 'api.js',
 };
 
 var URI_KEY = {
@@ -44,9 +42,11 @@ var PRJ = {};
 // #endregion
 
 function f_load(url, type) {
+    if (url.indexOf('http') != 0) url += APP.HOST + url;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, false);
     xhr.send(null);
+    console.log(url, { status: xhr.status, statusText: xhr.statusText });
     if (type == 'text') return xhr.responseText;
     return JSON.parse(xhr.responseText);
 }

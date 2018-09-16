@@ -11,10 +11,8 @@ APP = {
 };
 
 CF = {
-    API_URL_SRC_JS_CONFIG: 'http://localhost:60000/config.js',
-    API_URL_SRC_JS_UNDERSCORE: 'http://localhost:60000/lib/underscore.min.js',
-    API_URL_SRC_JS_WORKER: 'http://localhost:60000/api.js',
-    //API_URL_SRC_JS_WORKER: 'https://raw.githubusercontent.com/git-thinh/appui/master/api.js',
+    API_URL_SRC_JS_UNDERSCORE: '',
+    API_URL_SRC_JS_WORKER: '',
 };
 
 URI_KEY = {
