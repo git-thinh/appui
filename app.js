@@ -46,12 +46,12 @@ var API_KEY = {
 };
 
 var PRJ = {
-    W2UI: {
-        DEMO001: {
-            LIBS: [CF.URL_PATH_JQUERY_2X]
+    w2ui: {
+        demo001: {
+            libs: [CF.URL_PATH_JQUERY_2X]
         },
-        DEMOS: {
-            LIBS: [CF.URL_PATH_JQUERY_2X]
+        demos: {
+            libs: [CF.URL_PATH_JQUERY_2X]
         },
     }
 };
